@@ -1,0 +1,14 @@
+version: "2"
+services:
+  web:
+    image: ubuntu:xenial
+    command: ['/usr/bin/dumb-init', '/bin/bash']
+    dev_overrides:
+      environment:
+        - "DEBUG=1"
+
+registries: {}
+  # Add optional registries used for deployment. For example:
+  #  google:
+  #    url: https://gcr.io
+  #    namespace: my-cool-project-xxxxxx
