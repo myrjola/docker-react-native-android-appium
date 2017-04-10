@@ -10,5 +10,5 @@ A Docker container able to:
 This project uses [Ansible Container](http://docs.ansible.com/ansible-container/getting_started.html).
 
 ```
-ansible-container build
+COMPOSE_HTTP_TIMEOUT=300 ansible-container build --from-scratch --flatten
 ```
