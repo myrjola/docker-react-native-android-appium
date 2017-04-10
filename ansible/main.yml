@@ -26,6 +26,9 @@
       raw: apt-get install -y python python-apt
       when: true
 
+    - name: Install dumb-init
+      apt: deb=https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb
+
     - name: Install dependencies
       apt:
         name: "{{ item }}"
@@ -83,4 +86,3 @@
           --tag google_apis \
           --force
       when: true
-
