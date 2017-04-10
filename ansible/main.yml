@@ -7,23 +7,29 @@
 ---
 - hosts: devenv
   gather_facts: false
+  vars:
+    android_home: "/opt/android"
   tasks:
+    - name: Update apt-cache
+      raw: apt-get update
+      when: true
+
+    - name: Dist-upgrade
+      raw: apt-get dist-upgrade -y
+      when: true
+
+    - name: Install Ansible dependencies
+      raw: apt-get install -y python python-apt
+      when: true
+
     - name: Get NodeJS setup script
       get_url:
-        url: https://deb.nodesource.com/setup_6.x
+        url: http://deb.nodesource.com/setup_6.x
         dest: ./nodejsrepository
         mode: "u=rwx"
 
     - name: Add NodeJS repository
       command: ./nodejsrepository
-      when: true
-
-    - name: Update apt-cache
-      raw: apt-get update
-      when: true
-
-    - name: Install Ansible dependencies
-      raw: apt-get install -y python python-apt
       when: true
 
     - name: Install dumb-init
@@ -52,25 +58,25 @@
 
 
     - name: Create android SDK path
-      file: path=/opt/android state=directory mode=0755
+      file: path="{{ android_home }}" state=directory mode=0755
 
     - name: Fetch Android SDK
       unarchive:
           src: https://dl.google.com/android/repository/tools_r25.2.3-linux.zip
-          dest: /opt/android
+          dest: "{{ android_home }}"
           remote_src: True
 
     - name: Update Android SDK
-      shell: yes | /opt/android/tools/bin/sdkmanager --update --verbose
+      shell: yes | {{ android_home }}/tools/bin/sdkmanager --update --verbose
       when: true
 
     - name: Accept Android SDK licenses
-      shell: yes | /opt/android/tools/bin/sdkmanager --licenses
+      shell: yes | {{ android_home }}/tools/bin/sdkmanager --licenses
       when: true
 
     - name: Install required packages
       shell: |
-        yes | /opt/android/tools/bin/sdkmanager \
+        yes | {{ android_home }}/tools/bin/sdkmanager \
           --verbose \
           'add-ons;addon-google_apis-google-23' \
           'platforms;android-23' \
@@ -79,7 +85,7 @@
 
     - name: Create AVD
       shell: |
-        echo no | /opt/android/tools/bin/avdmanager \
+        echo no | {{ android_home }}/tools/bin/avdmanager \
           create avd \
           --package 'system-images;android-23;google_apis;armeabi-v7a' \
           --name testAVD  \

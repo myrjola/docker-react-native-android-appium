@@ -1,7 +1,12 @@
 version: "2"
+defaults:
+  ANDROID_HOME: /opt/android
 services:
   devenv:
     image: ubuntu:16.04
+    environment:
+      ANDROID_HOME: {{ ANDROID_HOME }}
+      PATH: {{ ANDROID_HOME }}/tools/bin:{{ ANDROID_HOME }}/platform-tools:$PATH
     command: ['/usr/bin/dumb-init', '/bin/bash']
 
 registries: {}
