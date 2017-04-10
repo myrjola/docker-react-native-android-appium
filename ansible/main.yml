@@ -5,5 +5,82 @@
 # For many examples of roles, check out Ansible Galaxy: https://galaxy.ansible.com/
 #
 ---
-- hosts: all
+- hosts: devenv
   gather_facts: false
+  tasks:
+    - name: Get NodeJS setup script
+      get_url:
+        url: https://deb.nodesource.com/setup_6.x
+        dest: ./nodejsrepository
+        mode: "u=rwx"
+
+    - name: Add NodeJS repository
+      command: ./nodejsrepository
+      when: true
+
+    - name: Update apt-cache
+      raw: apt-get update
+      when: true
+
+    - name: Install Ansible dependencies
+      raw: apt-get install -y python python-apt
+      when: true
+
+    - name: Install dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - python
+        - unzip
+        - openjdk-8-jdk
+        - build-essential
+        - nodejs
+
+    - name: Install NodeJS dependencies
+      npm:
+        name: "{{ item }}"
+        global: yes
+        state: present
+      with_items:
+        - react-native-cli
+        - appium
+        - yarn
+
+
+    - name: Create android SDK path
+      file: path=/opt/android state=directory mode=0755
+
+    - name: Fetch Android SDK
+      unarchive:
+          src: https://dl.google.com/android/repository/tools_r25.2.3-linux.zip
+          dest: /opt/android
+          remote_src: True
+
+    - name: Update Android SDK
+      shell: yes | /opt/android/tools/bin/sdkmanager --update --verbose
+      when: true
+
+    - name: Accept Android SDK licenses
+      shell: yes | /opt/android/tools/bin/sdkmanager --licenses
+      when: true
+
+    - name: Install required packages
+      shell: |
+        yes | /opt/android/tools/bin/sdkmanager \
+          --verbose \
+          'add-ons;addon-google_apis-google-23' \
+          'platforms;android-23' \
+          'system-images;android-23;google_apis;armeabi-v7a'
+      when: true
+
+    - name: Create AVD
+      shell: |
+        echo no | /opt/android/tools/bin/avdmanager \
+          create avd \
+          --package 'system-images;android-23;google_apis;armeabi-v7a' \
+          --name testAVD  \
+          --tag google_apis \
+          --force
+      when: true
+
