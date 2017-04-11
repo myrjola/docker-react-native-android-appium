@@ -77,17 +77,17 @@
     - name: Install required packages
       shell: |
         yes | {{ android_home }}/tools/bin/sdkmanager \
-          --verbose \
-          'add-ons;addon-google_apis-google-23' \
-          'platforms;android-23' \
-          'system-images;android-23;google_apis;armeabi-v7a'
+          "platforms;android-19" \
+          "system-images;android-19;google_apis;armeabi-v7a" \
+          "extras;google;m2repository" \
+          --verbose
       when: true
 
     - name: Create AVD
       shell: |
         echo no | {{ android_home }}/tools/bin/avdmanager \
           create avd \
-          --package 'system-images;android-23;google_apis;armeabi-v7a' \
+          --package 'system-images;android-19;google_apis;armeabi-v7a' \
           --name testAVD  \
           --tag google_apis \
           --force
