@@ -24,7 +24,7 @@
 
     - name: Get NodeJS setup script
       get_url:
-        url: http://deb.nodesource.com/setup_6.x
+        url: http://deb.nodesource.com/setup_7.x
         dest: ./nodejsrepository
         mode: "u=rwx"
 
