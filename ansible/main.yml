@@ -45,6 +45,8 @@
         - openjdk-8-jdk
         - build-essential
         - nodejs
+        - gcc-multilib
+        - lib32z1
 
     - name: Install NodeJS dependencies
       npm:
@@ -53,9 +55,7 @@
         state: present
       with_items:
         - react-native-cli
-        - appium
         - yarn
-
 
     - name: Create android SDK path
       file: path="{{ android_home }}" state=directory mode=0755
@@ -77,9 +77,13 @@
     - name: Install required packages
       shell: |
         yes | {{ android_home }}/tools/bin/sdkmanager \
-          "platforms;android-19" \
-          "system-images;android-19;google_apis;armeabi-v7a" \
+          "build-tools;23.0.1" \
+          "build-tools;25.0.0" \
+          "platforms;android-23" \
+          "platforms;android-25" \
+          "system-images;android-21;google_apis;armeabi-v7a" \
           "extras;google;m2repository" \
+          "extras;android;m2repository" \
           --verbose
       when: true
 
@@ -87,7 +91,7 @@
       shell: |
         echo no | {{ android_home }}/tools/bin/avdmanager \
           create avd \
-          --package 'system-images;android-19;google_apis;armeabi-v7a' \
+          --package 'system-images;android-21;google_apis;armeabi-v7a' \
           --name testAVD  \
           --tag google_apis \
           --force
