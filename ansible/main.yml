@@ -9,6 +9,8 @@
   gather_facts: false
   vars:
     android_home: "/opt/android"
+    android_image: "system-images;android-19;google_apis;armeabi-v7a"
+
   tasks:
     - name: Update apt-cache
       raw: apt-get update
@@ -47,6 +49,8 @@
         - nodejs
         - gcc-multilib
         - lib32z1
+        - git
+        - openssh-client
 
     - name: Install NodeJS dependencies
       npm:
@@ -81,7 +85,7 @@
           "build-tools;25.0.0" \
           "platforms;android-23" \
           "platforms;android-25" \
-          "system-images;android-21;google_apis;armeabi-v7a" \
+          "{{ android_image }}" \
           "extras;google;m2repository" \
           "extras;android;m2repository" \
           --verbose
@@ -91,7 +95,7 @@
       shell: |
         echo no | {{ android_home }}/tools/bin/avdmanager \
           create avd \
-          --package 'system-images;android-21;google_apis;armeabi-v7a' \
+          --package "{{ android_image }}" \
           --name testAVD  \
           --tag google_apis \
           --force
